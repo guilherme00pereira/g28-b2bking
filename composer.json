@@ -1,0 +1,14 @@
+{
+    "name": "g28/b2bkingext",
+    "autoload": {
+        "psr-4": {
+            "G28\\B2bkingext\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "guilhermepereira"
+        }
+    ],
+    "require": {}
+}

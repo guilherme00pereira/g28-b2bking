@@ -1,0 +1,25 @@
+#b2bking_importer_ext {
+    margin: 50px;
+    padding: 20px;
+    font-size: 14px;
+    background: #fff;
+    box-shadow: 0 3px 6px rgb(0 0 0 / 17%);
+    border-radius: 5px;
+}
+
+.b2bking-btn-success {
+    background-color: #639c1e !important;
+    border-color: #639c1e !important;
+    color: white !important;
+}
+
+.g28b2bking-row {
+    border-top: 1px solid #8B8B8B;
+    padding-bottom: 20px;
+}
+
+.g28b2bking-row-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
