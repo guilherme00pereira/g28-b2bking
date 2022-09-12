@@ -7,7 +7,6 @@ class VariationDTO
     private string $ID;
     private string $title;
     private string $parent;
-    private array $attributes;
     private string $prices;
 
     /**
@@ -43,25 +42,9 @@ class VariationDTO
     }
 
     /**
-     * @return array
+     * @return string
      */
-    public function getAttributes(): array
-    {
-        return $this->attributes;
-    }
-
-    /**
-     * @param string $attributes
-     */
-    public function setAttributes(string $attributes): void
-    {
-        $this->attributes[] = $attributes;
-    }
-
-    /**
-     * @return array
-     */
-    public function getPrices(): array
+    public function getPrices(): string
     {
         return $this->prices;
     }
@@ -95,7 +78,6 @@ class VariationDTO
         $this->ID           = $id;
         $this->title        = $title;
         $this->parent       = $parent;
-        $this->attributes   = [];
         $this->prices       = "";
     }
 
@@ -105,7 +87,6 @@ class VariationDTO
             $this->ID,
             $this->title,
             $this->parent,
-            implode("-", $this->attributes),
             $this->prices
         ];
     }

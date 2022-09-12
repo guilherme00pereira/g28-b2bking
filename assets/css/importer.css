@@ -33,8 +33,12 @@
     color: #3d698e;
 }
 
-.g28b2bking-row-content .text-faixa {
+.g28b2bking-row-content .warning {
     color: #c50c0c;
+}
+
+.g28b2bking-row-content .text-faixa {
+    color: #e55f25;
 }
 
 .g28b2bking-row-content .text-preco {

@@ -17,13 +17,15 @@
             </div>
             <div class="text">
                 <p>
-                    O arquivo contém todos os produtos e suas variações, e está no formato CSV, contendo as seguintes colunas:<br />
+                    O arquivo contém todos os produtos e suas variações, e está no formato CSV, contendo as seguintes colunas, 
+                    <b class="warning">separadas por vírgula ","</b>:<br />
                     <b>ID</b> - <b>Título</b> - <b>ID Produto Pai</b> - <b>Preços</b>
                 </p>
                 <p>
                     A coluna de preços deve ser preenchida de acordo com o seguinte padrão:<br />
                     <span class="text-faixa">início da faixa:</span>
-                    <span class="text-preco">preço</span><br />
+                    <span class="text-preco">preço</span>, <b class="warning">sempre separados por ponto e vírgula ";"</b>
+                    <br />
                     Exemplo: <i>
                             <span class="text-faixa">20:</span>
                             <span class="text-preco">85,68;</span>
