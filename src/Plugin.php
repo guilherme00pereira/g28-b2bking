@@ -127,8 +127,8 @@ class Plugin {
     /**
      * Get the value of price_tier_meta_key
      */ 
-    public function getPriceTierMetaKey()
+    public static function getPriceTierMetaKey(): string
     {
-        return $this->price_tier_meta_key;
+        return self::$price_tier_meta_key;
     }
 }

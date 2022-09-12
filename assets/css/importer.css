@@ -22,4 +22,33 @@
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
+    align-items: center;
+}
+
+.g28b2bking-row-content div {
+    padding: 0 1.5em;
+}
+
+.g28b2bking-row-content .text {
+    color: #3d698e;
+}
+
+.g28b2bking-row-content .text-faixa {
+    color: #c50c0c;
+}
+
+.g28b2bking-row-content .text-preco {
+    color: #105B2F;
+}
+
+#btnImportAction {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 20px;
+}
+
+#messageImport {
+    margin-top: 30px;
+    padding: 1rem;
 }
