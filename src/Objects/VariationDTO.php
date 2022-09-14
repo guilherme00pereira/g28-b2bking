@@ -84,11 +84,11 @@ class VariationDTO
 
     public function toRowArray(): array
     {
-        return [
+        $columns = [
             $this->ID,
             $this->title,
-            $this->parent,
-            $this->prices
+            $this->parent
         ];
+        return array_merge( $columns, $this->prices );
     }
 }

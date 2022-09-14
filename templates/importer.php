@@ -16,7 +16,7 @@ $product_categories = get_terms( 'product_cat', $cat_args );
     <div class="g28b2bking-row">
         <h2>Exportar template</h2>
         <div class="g28b2bking-row-content">
-            <div style="margin-right: 50px;">
+            <div class="export-form">
                 <form method="post" id="download_form" action="<?php echo admin_url('admin-post.php'); ?>">
                     <input type="hidden" name="action" value="exportProductsCsv">
                     <div class="form_control">
@@ -35,24 +35,17 @@ $product_categories = get_terms( 'product_cat', $cat_args );
             <div class="text">
                 <p>
                     O arquivo contém todos os produtos e suas variações, e está no formato CSV, contendo as seguintes colunas, 
-                    <b class="warning">separadas por vírgula ","</b>:<br />
+                    <b class="warning">separadas por ponto e vírgula ";"</b>:<br />
                     <b>ID</b> - <b>Título</b> - <b>ID Produto Pai</b> - <b>Preços</b>
                 </p>
                 <p>
-                    A coluna de preços deve ser preenchida de acordo com o seguinte padrão:<br />
-                    <span class="text-faixa">início da faixa:</span>
-                    <span class="text-preco">preço</span>, <b class="warning">sempre separados por ponto e vírgula ";"</b>
-                    <br />
-                    Exemplo: <i>
-                            <span class="text-faixa">20:</span>
-                            <span class="text-preco">85,68;</span>
-                            <span class="text-faixa">40:</span>
-                            <span class="text-preco">78,54;</span>
-                            <span class="text-faixa">60:</span>
-                            <span class="text-preco">73,19;</span>
-                            <span class="text-faixa">80:</span>
-                            <span class="text-preco">69,62;</span>
-                        </i>
+                    As colunas de preços devem ser preenchidas seguindo o padrão:<br />
+                    <span class="text-faixa">quantidade</span> | 
+                    <span class="text-preco">preço</span> | 
+                    <span class="text-faixa">quantidade</span> | 
+                    <span class="text-preco">preço</span> | 
+                    <span class="text-faixa">quantidade</span> | 
+                    <span class="text-preco">preço</span>
                 </p>
             </div>
         </div>

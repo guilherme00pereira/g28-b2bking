@@ -101,20 +101,35 @@ class ProductDAO
     public static function updateProductPriceTiers( $fileTempName ): string
     {
         $count = 0;
-        $items = array_map('str_getcsv', file($fileTempName));
-        array_shift( $items );
-        foreach ($items as $item) {
-            if( !empty( $item[2] ) || !is_null( $item[2] ) )
+        $rows = file($fileTempName);
+        array_shift( $rows );
+        foreach ($rows as $row) {
+            $row = str_getcsv($row, ';');
+            if( self::checkRowValidity( $row ) )
             {
-                if( !empty( $item[4] ) ) {
-                    $count++;
-                    $id = (int)$item[0];
-                    $prices = $item[4];
-                    update_post_meta($id, Plugin::getPriceTierMetaKey(), $prices);
-                }
+                $count++;
+                update_post_meta((int)$row[0], '_regular_price', $row[4]);
+                self::setPricesTiers( $row );
             }
         }
         return "Foi realizada a atualização de " . $count . " variações de produto";
+    }
+
+    private static function setPricesTiers( $row )
+    {
+        $priceString = "";
+        $totalColumns = count($row);
+        for($i = 3; $i < $totalColumns; $i++) 
+        {
+            $priceString .= $row[$i] . ($i%2 == 0 ? ";" : ":");
+        }
+        update_post_meta((int)$row[0], Plugin::getPriceTierMetaKey(), $priceString);
+    }
+
+    private static function checkRowValidity( $row )
+    {
+        if(count($row) < 4) return false;
+        return !( empty( $row[2] ) && empty( $row[3] ) && empty( $row[4] ));
     }
 
 }

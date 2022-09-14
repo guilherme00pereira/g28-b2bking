@@ -53,6 +53,11 @@ form .form_control select {
     color: #105B2F;
 }
 
+.export-form {
+    margin-right: 50px; 
+    min-width: 300px;
+}
+
 #btnImportAction {
     display: flex;
     flex-direction: row;

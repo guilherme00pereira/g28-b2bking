@@ -9,6 +9,7 @@ class Controller {
     public function __construct()
 	{
 		add_action('admin_menu', array($this, 'addMenuPage' ));
+        add_action( 'wp_enqueue_scripts', [ $this, 'frontStylesAndScripts'] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'registerStylesAndScripts'] );
         add_action( 'wp_ajax_ajaxImportTierPricesCsv', [ $this, 'ajaxImportTierPricesCsv' ] );
         add_action( 'wp_ajax_ajaxImportStatus', [ $this, 'ajaxImportStatus' ] );
@@ -44,21 +45,39 @@ class Controller {
 
     public function registerStylesAndScripts()
 	{
-		wp_register_style( Plugin::getAssetsPrefix() . 'importer_style', Plugin::getAssetsUrl() . 'css/importer.css', null, date("YmdHis") );
-		wp_register_script(
-            Plugin::getAssetsPrefix() . 'importer_script',
-            Plugin::getAssetsUrl() . 'js/importer.js',
+            wp_register_style( Plugin::getAssetsPrefix() . 'importer_style', Plugin::getAssetsUrl() . 'css/importer.css', null, date("YmdHis") );
+            wp_register_script(
+                Plugin::getAssetsPrefix() . 'importer_script',
+                Plugin::getAssetsUrl() . 'js/importer.js',
+                array( 'jquery' ),
+                date("YmdHis"),
+                true
+            );
+            wp_localize_script( Plugin::getAssetsPrefix() . 'importer_script', 'ajaxobj', [
+                'ajax_url'              => admin_url( 'admin-ajax.php' ),
+                'security'              => wp_create_nonce( 'g28b2bking_nonce' ),
+                'action_import'         => 'ajaxImportTierPricesCsv',
+                'action_importStatus'   => 'ajaxExportProductsCsv',
+            ]);
+	}
+
+    public function frontStylesAndScripts()
+    {
+        wp_enqueue_script(
+            Plugin::getAssetsPrefix() . 'maskedinput',
+            Plugin::getAssetsUrl() . 'js/jquery.mask.min.js',
             array( 'jquery' ),
+            null,
+            true
+        );
+        wp_enqueue_script(
+            Plugin::getAssetsPrefix() . 'register_fields',
+            Plugin::getAssetsUrl() . 'js/register_fields.js',
+            array( 'jquery', 'maskedinput' ),
             date("YmdHis"),
             true
         );
-		wp_localize_script( Plugin::getAssetsPrefix() . 'importer_script', 'ajaxobj', [
-			'ajax_url'              => admin_url( 'admin-ajax.php' ),
-			'security'              => wp_create_nonce( 'g28b2bking_nonce' ),
-            'action_import'         => 'ajaxImportTierPricesCsv',
-            'action_importStatus'   => 'ajaxExportProductsCsv',
-        ]);
-	}
+    }
 
     public function exportProductsCsv()
     {
