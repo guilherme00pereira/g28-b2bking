@@ -1,5 +1,12 @@
 <?php
 
+$cat_args = array(
+    'orderby'    => 'name',
+    'order'      => 'asc',
+    'hide_empty' => false,
+);
+$product_categories = get_terms( 'product_cat', $cat_args );
+
 ?>
 
 <div id="b2bking_importer_ext">
@@ -12,7 +19,17 @@
             <div style="margin-right: 50px;">
                 <form method="post" id="download_form" action="<?php echo admin_url('admin-post.php'); ?>">
                     <input type="hidden" name="action" value="exportProductsCsv">
-                    <input type="submit" name="download_csv" class="button-primary" value="Download CSV" />
+                    <div class="form_control">
+                        <label for="productCategories">Categorias: </label>
+                        <select id="productCategories" name="productCategories">
+                            <?php foreach ($product_categories as $category) : ?>
+                                <option value="<?php echo $category->term_id ?>"><?php echo $category->name ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="form_control">
+                        <input type="submit" name="download_csv" class="button-primary" value="Download CSV" />
+                    </div>
                 </form>
             </div>
             <div class="text">

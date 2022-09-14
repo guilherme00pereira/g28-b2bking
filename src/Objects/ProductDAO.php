@@ -15,32 +15,35 @@ class ProductDAO
         $this->rows         = [];
     }
 
-    public function getProducts(): array
+    public function getProducts( $category = null): array
     {
-        $this->getProductsFromDB();
-        $this->getVariations();
-        ksort( $this->products );
-        foreach ( $this->products as $product )
-        {
-            $this->rows[] = $product->toRowArray();
-            foreach ($product->getVariations() as $variation)
-            {
-                $this->rows[] = $variation->toRowArray();
+        $this->getProductsFromDB( $category );
+        if( count( $this->products ) > 0 ) {
+            $this->getVariations();
+            ksort($this->products);
+            foreach ($this->products as $product) {
+                $this->rows[] = $product->toRowArray();
+                foreach ($product->getVariations() as $variation) {
+                    $this->rows[] = $variation->toRowArray();
+                }
             }
+        } else {
+            $this->rows[] = ["Nenhum produto encontrado para a categoria informada", null, null, null];
         }
         return $this->rows;
     }
 
-    private function getProductsFromDB()
+    private function getProductsFromDB( $category)
     {
         global $wpdb;
-        $sqlProducts        = "select ID, post_title as title from " . $wpdb->prefix . "posts 
-                                where post_type = 'product' 
-                                and ID in (
-                                select distinct(post_parent) from " . $wpdb->prefix . "posts 
-                                where post_type = 'product_variation'
-                                )
-                                order by ID";
+        $sqlProducts        = "select ID, post_title as title from " . $wpdb->prefix . "posts where post_type = 'product'
+                and ID in ( select distinct(post_parent) from " . $wpdb->prefix . "posts where post_type = 'product_variation' ) ";
+        if( !is_null( $category ) ) {
+            $sqlProducts    .= " and ID in (select s.object_id from " . $wpdb->prefix . "term_relationships s
+                                inner join " . $wpdb->prefix . "term_taxonomy x on s.term_taxonomy_id = x.term_taxonomy_id
+                                where x.term_id = '" . $category . "') ";
+        }
+        $sqlProducts        .= "order by ID";
         $dbProducts         = $wpdb->get_results( $sqlProducts, ARRAY_A );
         foreach ( $dbProducts as $product ) {
             $this->products[$product['ID']] = new ProductDTO( $product['ID'], $product['title'] );
@@ -60,15 +63,17 @@ class ProductDAO
         foreach ($dbVariations as $variation) {
             if( array_key_exists( $variation['ID'], $variations ) ) {
                 $vdto = $variations[$variation['ID']];
-                $vdto->setPrices($variation['tiers']);
+                $vdto->setPrices( $variation['tiers'] );
                 $variations[$variation['ID']] = $vdto;
             }
         }
 
         foreach ( $variations as $variation ) {
             $pdto = $this->products[$variation->getParent()];
-            $pdto->addVariation( $variation );
-            $this->products[$pdto->getID()] = $pdto;
+            if( !is_null( $pdto ) ) {
+                $pdto->addVariation($variation);
+                $this->products[$pdto->getID()] = $pdto;
+            }
         }
     }
 
@@ -86,7 +91,7 @@ class ProductDAO
     private function getAllVariations()
     {
         global $wpdb;
-        $sqlVariations = "select p.ID, post_title as title, p.post_parent as parent from " . $wpdb->prefix . "posts p 
+        $sqlVariations = "select distinct(p.ID), post_title as title, p.post_parent as parent from " . $wpdb->prefix . "posts p 
                             join " . $wpdb->prefix . "postmeta m on p.ID = m.post_id
                             where p.post_type = 'product_variation'";
         $dbVariations = $wpdb->get_results($sqlVariations, ARRAY_A);

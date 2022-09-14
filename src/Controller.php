@@ -13,6 +13,8 @@ class Controller {
         add_action( 'wp_ajax_ajaxImportTierPricesCsv', [ $this, 'ajaxImportTierPricesCsv' ] );
         add_action( 'wp_ajax_ajaxImportStatus', [ $this, 'ajaxImportStatus' ] );
         add_action( 'admin_post_exportProductsCsv', [ $this, 'exportProductsCsv' ] );
+        add_filter( 'woocommerce_registration_redirect', [ $this, 'loginRedirect'], 10, 1);
+        add_filter( 'woocommerce_login_redirect', [ $this, 'loginRedirect'], 10, 2);
 	}
 
     public function addMenuPage()
@@ -60,8 +62,9 @@ class Controller {
 
     public function exportProductsCsv()
     {
+        $category   = $_POST['productCategories'];
         $pdao       = new ProductDAO();
-        $products   = $pdao->getProducts();
+        $products   = $pdao->getProducts($category);
         $fileName   = "export_products.csv";
         ob_clean();
         header( 'Pragma: public' );
@@ -71,9 +74,9 @@ class Controller {
         header( 'Content-Type: text/csv' );
         header( 'Content-Disposition: attachment;filename=' . $fileName );
         $fp         = fopen( 'php://output', 'w' );
-        fputcsv( $fp, [ "ID", "name", "parent", "price_tiers" ] );
+        fputcsv( $fp, [ "ID", "name", "parent", "price_tiers" ], ";" );
         foreach ( $products AS $product ) {
-            fputcsv( $fp, $product );
+            fputcsv( $fp, $product, ";" );
         }
         fclose( $fp );
         ob_flush();
@@ -91,6 +94,12 @@ class Controller {
     {
         echo json_encode(['complete' => true, 'message' => 'Importação finalizada!']);
         wp_die();
+    }
+
+    public function loginRedirect( $redirection_url )
+    {
+        $redirection_url = wp_get_referer() ? wp_get_referer() : wc_get_page_permalink( 'welcome' );
+        return $redirection_url;
     }
 
 }

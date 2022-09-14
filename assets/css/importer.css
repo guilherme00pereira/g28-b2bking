@@ -7,6 +7,14 @@
     border-radius: 5px;
 }
 
+form .form_control {
+    margin: 20px 0;
+}
+
+form .form_control select {
+    margin-top: 5px;
+}
+
 .b2bking-btn-success {
     background-color: #639c1e !important;
     border-color: #639c1e !important;

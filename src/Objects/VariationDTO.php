@@ -7,7 +7,7 @@ class VariationDTO
     private string $ID;
     private string $title;
     private string $parent;
-    private string $prices;
+    private array $prices;
 
     /**
      * @return string
@@ -42,9 +42,9 @@ class VariationDTO
     }
 
     /**
-     * @return string
+     * @return array
      */
-    public function getPrices(): string
+    public function getPrices(): array
     {
         return $this->prices;
     }
@@ -54,7 +54,8 @@ class VariationDTO
      */
     public function setPrices(string $prices): void
     {
-        $this->prices = $prices;
+        $p =  str_replace(":", ";", $prices);
+        $this->prices = explode(";", $p);
     }
 
     /**
@@ -78,7 +79,7 @@ class VariationDTO
         $this->ID           = $id;
         $this->title        = $title;
         $this->parent       = $parent;
-        $this->prices       = "";
+        $this->prices       = [];
     }
 
     public function toRowArray(): array
