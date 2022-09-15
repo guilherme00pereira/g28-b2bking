@@ -75,10 +75,7 @@ class ProductDTO
     {
         return [
             $this->ID,
-            $this->title,
-            null,
-            null,
-            null
+            $this->title
         ];
     }
 }

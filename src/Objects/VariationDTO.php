@@ -41,6 +41,14 @@ class VariationDTO
         $this->title = $title;
     }
 
+     /**
+     * @param string $title
+     */
+    public function appendTitle(string $title): void
+    {
+        $this->title .= " | " . $title;
+    }
+
     /**
      * @return array
      */

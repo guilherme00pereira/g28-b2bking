@@ -3,7 +3,7 @@
 Plugin Name: G28 B2BKing
 Plugin URI: #
 Description: Adiciona funcionalidades extras ao plugin B2BKing
-Version: 0.2.2
+Version: 0.2.5
 Author: Guilherme Pereira - G28
 Author URI: #
 Text Domain: g28-b2bkingext

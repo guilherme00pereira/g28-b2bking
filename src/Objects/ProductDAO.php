@@ -55,8 +55,15 @@ class ProductDAO
         $variations = [];
         $dbVariations = $this->getAllVariations();
         foreach ($dbVariations as $variation) {
-            $vdto = new VariationDTO( $variation['ID'], $variation['title'], $variation['parent'] );
-            $variations[$variation['ID']] = $vdto;
+            if( array_key_exists( $variation['ID'], $variations ) ) {
+                $vdto = $variations[$variation['ID']];
+                $vdto->appendTitle($variation['attribute']);
+                $variations[$variation['ID']] = $vdto;
+            } else {
+                $vdto = new VariationDTO( $variation['ID'], $variation['title'], $variation['parent'] );
+                $vdto->appendTitle($variation['attribute']);
+                $variations[$variation['ID']] = $vdto;
+            }
         }
 
         $dbVariations = $this->getVariationsWithPriceTiers();
@@ -77,6 +84,16 @@ class ProductDAO
         }
     }
 
+    private function getAllVariations()
+    {
+        global $wpdb;
+        $sqlVariations = "select distinct(p.ID), post_title as title, p.post_parent as parent, meta_value as attribute from " . $wpdb->prefix . "posts p 
+                            join " . $wpdb->prefix . "postmeta m on p.ID = m.post_id
+                            where p.post_type = 'product_variation' and meta_key like'attribute%' order by p.ID";
+        $dbVariations = $wpdb->get_results($sqlVariations, ARRAY_A);
+        return $dbVariations;
+    }
+    
     private function getVariationsWithPriceTiers()
     {
         global $wpdb;
@@ -88,22 +105,17 @@ class ProductDAO
 
     }
 
-    private function getAllVariations()
-    {
-        global $wpdb;
-        $sqlVariations = "select distinct(p.ID), post_title as title, p.post_parent as parent from " . $wpdb->prefix . "posts p 
-                            join " . $wpdb->prefix . "postmeta m on p.ID = m.post_id
-                            where p.post_type = 'product_variation'";
-        $dbVariations = $wpdb->get_results($sqlVariations, ARRAY_A);
-        return $dbVariations;
-    }
-
     public static function updateProductPriceTiers( $fileTempName ): string
     {
         $count = 0;
         $rows = file($fileTempName);
         array_shift( $rows );
+        array_shift( $rows );
         foreach ($rows as $row) {
+            if( substr($row, -1) === ";" ) 
+            {
+                $row = substr( $row, 0, -1 );
+            }
             $row = str_getcsv($row, ';');
             if( self::checkRowValidity( $row ) )
             {
@@ -121,7 +133,9 @@ class ProductDAO
         $totalColumns = count($row);
         for($i = 3; $i < $totalColumns; $i++) 
         {
-            $priceString .= $row[$i] . ($i%2 == 0 ? ";" : ":");
+            if( !empty( $row[$i] ) ) {
+                $priceString .= $row[$i] . ($i%2 == 0 ? ";" : ":");
+            }
         }
         update_post_meta((int)$row[0], Plugin::getPriceTierMetaKey(), $priceString);
     }

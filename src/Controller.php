@@ -93,6 +93,7 @@ class Controller {
         header( 'Content-Type: text/csv' );
         header( 'Content-Disposition: attachment;filename=' . $fileName );
         $fp         = fopen( 'php://output', 'w' );
+        fputcsv( $fp, [ "sep=;" ] );
         fputcsv( $fp, [ "ID", "name", "parent", "price_tiers" ], ";" );
         foreach ( $products AS $product ) {
             fputcsv( $fp, $product, ";" );
