@@ -106,7 +106,8 @@ class Controller {
 
     public function ajaxImportTierPricesCsv()
     {
-        $return = ProductDAO::updateProductPriceTiers( $_FILES["file"]["tmp_name"] );
+        $pdao       = new ProductDAO();
+        $return     = $pdao->updateProductPriceTiers( $_FILES["file"]["tmp_name"] );
         echo $return;
         wp_die();
     }

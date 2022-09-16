@@ -41,7 +41,7 @@ class ProductDAO
         if( !is_null( $category ) ) {
             $sqlProducts    .= " and ID in (select s.object_id from " . $wpdb->prefix . "term_relationships s
                                 inner join " . $wpdb->prefix . "term_taxonomy x on s.term_taxonomy_id = x.term_taxonomy_id
-                                where x.term_id = '" . $category . "') ";
+                                where x.term_id = '" . $category . "' or x.parent = '" . $category . "') ";
         }
         $sqlProducts        .= "order by ID";
         $dbProducts         = $wpdb->get_results( $sqlProducts, ARRAY_A );
@@ -105,7 +105,7 @@ class ProductDAO
 
     }
 
-    public static function updateProductPriceTiers( $fileTempName ): string
+    public function updateProductPriceTiers( $fileTempName ): string
     {
         $count = 0;
         $rows = file($fileTempName);
@@ -117,18 +117,18 @@ class ProductDAO
                 $row = substr( $row, 0, -1 );
             }
             $row = str_getcsv($row, ';');
-            if( self::checkRowValidity( $row ) )
+            if( $this->checkRowValidity( $row ) )
             {
                 $count++;
                 update_post_meta((int)$row[0], '_regular_price', $row[4]);
-                update_post_meta((int)$row[0],'minimum_allowed_quantity', $row[3]);
-                self::setPricesTiers( $row );
+                update_post_meta((int)$row[2], 'minimum_allowed_quantity', $row[3]);
+                $this->setPricesTiers( $row );
             }
         }
         return "Foi realizada a atualização de " . $count . " variações de produto";
     }
 
-    private static function setPricesTiers( $row )
+    private function setPricesTiers( $row )
     {
         $priceString = "";
         $totalColumns = count($row);
@@ -141,10 +141,22 @@ class ProductDAO
         update_post_meta((int)$row[0], Plugin::getPriceTierMetaKey(), $priceString);
     }
 
-    private static function checkRowValidity( $row ): bool
+    private function checkRowValidity( $row ): bool
     {
         if(count($row) < 4) return false;
         return !( empty( $row[2] ) && empty( $row[3] ) && empty( $row[4] ));
+    }
+
+    public function getCategories()
+    {
+        $cat_args = array(
+            'orderby'    => 'name',
+            'order'      => 'asc',
+            'parent'    => 0,
+            'hide_empty' => false,
+        );
+        $categories = get_terms( 'product_cat', $cat_args );
+        return $categories;
     }
 
 }

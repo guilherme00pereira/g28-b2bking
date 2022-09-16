@@ -1,11 +1,9 @@
 <?php
 
-$cat_args = array(
-    'orderby'    => 'name',
-    'order'      => 'asc',
-    'hide_empty' => false,
-);
-$product_categories = get_terms( 'product_cat', $cat_args );
+use G28\B2bkingext\Objects\ProductDAO;
+
+$pdao               = new ProductDAO();
+$product_categories = $pdao->getCategories();
 
 ?>
 
