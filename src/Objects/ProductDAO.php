@@ -121,6 +121,7 @@ class ProductDAO
             {
                 $count++;
                 update_post_meta((int)$row[0], '_regular_price', $row[4]);
+                update_post_meta((int)$row[0],'minimum_allowed_quantity', $row[3]);
                 self::setPricesTiers( $row );
             }
         }
@@ -140,7 +141,7 @@ class ProductDAO
         update_post_meta((int)$row[0], Plugin::getPriceTierMetaKey(), $priceString);
     }
 
-    private static function checkRowValidity( $row )
+    private static function checkRowValidity( $row ): bool
     {
         if(count($row) < 4) return false;
         return !( empty( $row[2] ) && empty( $row[3] ) && empty( $row[4] ));

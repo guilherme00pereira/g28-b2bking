@@ -63,6 +63,7 @@ class Controller {
 
     public function frontStylesAndScripts()
     {
+
         wp_enqueue_script(
             Plugin::getAssetsPrefix() . 'maskedinput',
             Plugin::getAssetsUrl() . 'js/jquery.mask.min.js',
@@ -73,7 +74,7 @@ class Controller {
         wp_enqueue_script(
             Plugin::getAssetsPrefix() . 'register_fields',
             Plugin::getAssetsUrl() . 'js/register_fields.js',
-            array( 'jquery', 'maskedinput' ),
+            array( 'jquery', Plugin::getAssetsPrefix() . 'maskedinput' ),
             date("YmdHis"),
             true
         );
@@ -94,9 +95,9 @@ class Controller {
         header( 'Content-Disposition: attachment;filename=' . $fileName );
         $fp         = fopen( 'php://output', 'w' );
         fputcsv( $fp, [ "sep=;" ] );
-        fputcsv( $fp, [ "ID", "name", "parent", "price_tiers" ], ";" );
+        fputcsv( $fp, [ "ID", "name", "parent", "price_tiers" ], ";", "'" );
         foreach ( $products AS $product ) {
-            fputcsv( $fp, $product, ";" );
+            fputcsv( $fp, $product, ";", "'" );
         }
         fclose( $fp );
         ob_flush();
