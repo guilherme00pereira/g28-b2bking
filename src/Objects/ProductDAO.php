@@ -3,6 +3,7 @@
 namespace G28\B2bkingext\Objects;
 
 use G28\B2bkingext\Plugin;
+use WP_Query;
 
 class ProductDAO
 {
@@ -41,7 +42,7 @@ class ProductDAO
         if( !is_null( $category ) ) {
             $sqlProducts    .= " and ID in (select s.object_id from " . $wpdb->prefix . "term_relationships s
                                 inner join " . $wpdb->prefix . "term_taxonomy x on s.term_taxonomy_id = x.term_taxonomy_id
-                                where x.term_id = '" . $category . "' or x.parent = '" . $category . "') ";
+                                where x.term_id IN (" . $this->getCategoryTree( $category ) . ") )";
         }
         $sqlProducts        .= "order by ID";
         $dbProducts         = $wpdb->get_results( $sqlProducts, ARRAY_A );
@@ -157,6 +158,20 @@ class ProductDAO
         );
         $categories = get_terms( 'product_cat', $cat_args );
         return $categories;
+    }
+
+    public function getCategoryTree( $parent )
+    {
+        $ids = [];
+        $args = array(
+            'child_of'    => $parent,
+            'hide_empty' => false,
+        );
+        $terms = get_terms( 'product_cat', $args );
+        foreach($terms as $term) {
+            $ids[] = $term->term_id;
+        }
+        return  implode(',', $ids);
     }
 
 }
